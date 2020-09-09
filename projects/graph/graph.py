@@ -30,7 +30,10 @@ class Graph:
         """
         Get all neighbors (edges) of a vertex.
         """
-        return self.vertices[vertex_id]
+        if vertex_id in self.vertices:
+            return self.vertices[vertex_id]
+        else:
+            return None
 
     def bft(self, starting_vertex):
         """
@@ -47,10 +50,10 @@ class Graph:
             v = q.dequeue()
 
             if v not in visited:
+                print(v)
                 visited.add(v)
-
-            for next_vertex in self.get_neighbors(v):
-                q.enqueue(next_vertex)
+                for next_v in self.get_neighbors(v):
+                    q.enqueue(next_v)
 
     def dft(self, starting_vertex):
         """
@@ -67,10 +70,10 @@ class Graph:
             v = s.pop()
 
             if v not in visited:
+                print(v)
                 visited.add(v)
-
-            for next_vertex in self.get_neighbors(v):
-                s.push(next_vertex)
+                for next_v in self.get_neighbors(v):
+                    s.push(next_v)
 
     def dft_recursive(self, starting_vertex, visited=None):
         """
@@ -88,7 +91,7 @@ class Graph:
         visited.add(starting_vertex)
         print(starting_vertex)
 
-        for v in self.get_neighbors(starting_vertex):
+        for v in self.vertices[starting_vertex]:
             if v not in visited:
                 self.dft_recursive(v, visited)
 
@@ -105,9 +108,9 @@ class Graph:
         # create a set to store the visited vertices
         visited = set()
         # while the is not empty
-        while Queue.size() > 0:
+        while q.size() > 0:
             # dequeue the first path
-            path = q.dequeue
+            path = q.dequeue()
             # grab the last vertex from the path
             v = path[-1]
             # check whether vertex has not been visited
@@ -126,7 +129,6 @@ class Graph:
                     path_copy.append(next_vertext)
                     # enqueue out new path
                     q.enqueue(path_copy)
-        return None
 
     def dfs(self, starting_vertex, destination_vertex):
         """
@@ -140,7 +142,7 @@ class Graph:
         # create a set to store the visited vertices
         visited = set()
         # while the is not empty
-        while Stack.size > 0:
+        while s.size() > 0:
             # dequeue the first path
             path = s.pop()
             # grab the last vertex from the path
@@ -161,9 +163,8 @@ class Graph:
                     path_copy.append(next_vertext)
                     # enqueue out new path
                     s.push(path_copy)
-        return None
 
-    def dfs_recursive(self, starting_vertex, destination_vertex, visited=None):
+    def dfs_recursive(self, starting_vertex, destination_vertex, path=[], visited=None):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
@@ -171,16 +172,24 @@ class Graph:
 
         This should be done using recursion.
         """
-        # TODO: Refactor for search
+        path += [starting_vertex]
+        v = path[len(path)-1]
         if visited is None:
             visited = set()
 
-        visited.add(starting_vertex)
-        print(starting_vertex)
+        if v not in visited:
+            if v is destination_vertex:
+                if path[len(path) - 1] is destination_vertex:
+                    return path
+            else:
+                visited.add(v)
 
-        for v in self.get_neighbors(starting_vertex):
-            if v not in visited:
-                self.dfs_recursive(v, visited)
+                for next_v in self.get_neighbors(v):
+                    path_copy = [item for item in path]
+                    temp = self.dfs_recursive(
+                        next_v, destination_vertex, path_copy, visited)
+                    if temp is not None:
+                        return temp
 
 
 if __name__ == '__main__':
